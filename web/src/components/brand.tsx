@@ -1,34 +1,53 @@
 import Image from "next/image";
 import { brand } from "@/lib/brand";
 
-export function BrandMark({
-  size = 36,
+export function BrandLockup({
   className = "",
+  priority = false,
+  fillWidth = true,
 }: {
-  size?: number;
   className?: string;
+  priority?: boolean;
+  fillWidth?: boolean;
 }) {
-  return (
-    <Image
-      src={brand.icon}
-      alt=""
-      width={size}
-      height={size}
-      className={`rounded-[22%] ${className}`}
-      priority
-    />
-  );
-}
+  if (fillWidth) {
+    return (
+      <span className={`relative block aspect-[985/439] w-full ${className}`}>
+        <Image
+          src={brand.logo}
+          alt={`${brand.name} — ${brand.tagline}`}
+          fill
+          unoptimized
+          className="object-contain"
+          sizes="(min-width: 768px) 40vw, 90vw"
+          priority={priority}
+        />
+      </span>
+    );
+  }
 
-export function BrandLockup({ className = "" }: { className?: string }) {
   return (
     <Image
       src={brand.logo}
       alt={`${brand.name} — ${brand.tagline}`}
       width={973}
       height={427}
-      className={`h-auto w-full ${className}`}
-      priority
+      className={`object-contain ${className}`}
+      sizes="240px"
+      unoptimized
+      priority={priority}
     />
+  );
+}
+
+export function BrandBar({ compact = false }: { compact?: boolean }) {
+  return (
+    <span className="inline-flex items-center">
+      <BrandLockup
+        fillWidth={false}
+        className={compact ? "h-8 w-auto max-w-[168px]" : "h-10 w-auto max-w-[220px]"}
+        priority
+      />
+    </span>
   );
 }

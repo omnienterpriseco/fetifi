@@ -5,14 +5,14 @@ struct WelcomeView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Color(hex: "#95BDC7").ignoresSafeArea()
             VStack(alignment: .leading, spacing: 24) {
                 Image("BrandLogo")
                     .resizable()
                     .scaledToFit()
                     .frame(maxWidth: 320)
                 Text("The same workspace as the website: wizard, timeline, budget, and guests.")
-                    .foregroundStyle(.white.opacity(0.7))
+                    .foregroundStyle(Color(hex: "#2F4A52"))
                 Spacer()
                 Button("Open Fetifye") {
                     store.signIn()
@@ -53,16 +53,25 @@ struct HomeView: View {
                 }
             }
         }
-        .navigationTitle(Brand.name)
-        .navigationDestination(for: EventRecord.self) { event in
-            EventHubView(eventId: event.id)
-        }
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Image("BrandLogo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 28)
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Delete account") {
                     store.deleteAll()
                 }
             }
+        }
+        .toolbarBackground(Color(hex: "#95BDC7"), for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .toolbarColorScheme(.light, for: .navigationBar)
+        .navigationDestination(for: EventRecord.self) { event in
+            EventHubView(eventId: event.id)
         }
     }
 }

@@ -19,7 +19,7 @@ export default function HomePage() {
     <div className="min-h-screen">
       <MarketingNav />
       <main className="mx-auto max-w-6xl px-6 pb-24 md:px-10">
-        <section className="grid items-center gap-12 py-10 md:grid-cols-[1.1fr_0.9fr] md:py-16">
+        <section className="flex flex-col gap-10 py-10 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12 lg:py-16">
           <div>
             <p className="text-xs uppercase tracking-[0.22em] text-muted">
               {brand.name} · Web + iPhone
@@ -44,12 +44,8 @@ export default function HomePage() {
               {brand.name} on the web and on iPhone — one event, everywhere.
             </p>
           </div>
-          <div className="relative flex justify-center">
-            <img
-              src={brand.icon}
-              alt={`${brand.name} app icon`}
-              className="h-auto w-full max-w-sm rounded-[2.4rem] shadow-[0_24px_60px_rgba(107,76,255,0.25)]"
-            />
+          <div className="relative w-full min-w-0">
+            <BrandLockup priority />
           </div>
         </section>
 
@@ -65,19 +61,19 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="mt-8 rounded-[2rem] bg-black px-8 py-12 text-paper">
+        <section className="mt-8 rounded-[2rem] px-8 py-12">
           <div className="mx-auto max-w-2xl">
             <BrandLockup />
           </div>
           <div className="mt-10 grid gap-6 md:grid-cols-2">
             <div>
-              <h2 className="text-3xl text-paper">Same event. Phone and browser.</h2>
-              <p className="mt-3 text-sm text-paper/70">
+              <h2 className="text-3xl">Same event. Phone and browser.</h2>
+              <p className="mt-3 text-sm text-muted">
                 Native iOS and this web app share one schema: owners, editors, viewers,
                 entitlements, and the workspace itself.
               </p>
             </div>
-            <div className="text-sm text-paper/80">
+            <div className="text-sm text-muted">
               <p>Apple / email sign-in · granular access · full account deletion</p>
               <p className="mt-2">Realtime collaboration is wired for Supabase when you connect it.</p>
             </div>

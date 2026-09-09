@@ -2,18 +2,16 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { brand } from "@/lib/brand";
 import { useAppStore } from "@/lib/store";
-import { BrandMark } from "./brand";
+import { BrandBar } from "./brand";
 import { Button } from "./ui";
 
 export function MarketingNav() {
   const user = useAppStore((s) => s.currentUser);
   return (
     <header className="flex items-center justify-between px-6 py-5 md:px-10">
-      <Link href="/" className="flex items-center gap-3">
-        <BrandMark size={40} />
-        <span className="text-sm font-medium tracking-wide">{brand.name}</span>
+      <Link href="/" className="flex items-center">
+        <BrandBar />
       </Link>
       <nav className="hidden items-center gap-8 text-sm text-muted md:flex">
         <Link href="/#modules">Modules</Link>
@@ -48,9 +46,8 @@ export function AppHeader() {
 
   return (
     <header className="flex items-center justify-between border-b border-[var(--line)] px-4 py-3 md:px-6">
-      <Link href="/app" className="flex items-center gap-2 text-sm font-medium">
-        <BrandMark size={32} />
-        {brand.name}
+      <Link href="/app" className="flex items-center">
+        <BrandBar compact />
       </Link>
       <div className="flex items-center gap-3 text-sm">
         <Link
