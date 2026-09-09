@@ -13,6 +13,9 @@ struct WelcomeView: View {
                     .frame(maxWidth: 320)
                 Text("The same workspace as the website: wizard, timeline, budget, and guests.")
                     .foregroundStyle(Color(hex: "#2F4A52"))
+                Text("Sale, no end date. Event kit \(Brand.eventKitPrice) (was \(Brand.eventKitWas)). Pro \(Brand.proPrice) (was \(Brand.proWas)). Free includes \(Brand.freeAiPromptsPerMonth) AI prompts a month.")
+                    .font(.footnote)
+                    .foregroundStyle(Color(hex: "#2F4A52"))
                 Spacer()
                 Button("Open Fetifi") {
                     store.signIn()

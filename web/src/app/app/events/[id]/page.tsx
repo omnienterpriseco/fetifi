@@ -5,6 +5,7 @@ import { useEvent } from "@/components/event-frame";
 import { Button } from "@/components/ui";
 import { optimizeBudget, readiness } from "@/lib/planner";
 import { formatWhen, money } from "@/lib/utils";
+import { pricing } from "@/lib/pricing";
 import { useAppStore } from "@/lib/store";
 
 export default function EventOverviewPage() {
@@ -64,10 +65,10 @@ export default function EventOverviewPage() {
             <p className="font-medium">Event kit</p>
             <p className="mt-1 text-muted">
               Unlock unlimited AI, printables polish, and extra collaborators for this
-              workspace only.
+              workspace only. Sale price {pricing.kit.price} (was {pricing.kit.was}).
             </p>
             <Button className="mt-4" variant="dark" onClick={() => unlockKit(event.id)}>
-              Unlock kit (demo)
+              Unlock kit {pricing.kit.price}
             </Button>
           </div>
         ) : (

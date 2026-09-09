@@ -13,6 +13,7 @@ import type {
   SupplyStatus,
 } from "./types";
 import { instantiateEvent, type WizardInput } from "./planner";
+import { FREE_AI_PROMPTS } from "./pricing";
 import { nowIso, uid } from "./utils";
 
 interface Store {
@@ -52,7 +53,7 @@ const demoUser = (email: string, fullName?: string): Profile => ({
   fullName: fullName || email.split("@")[0],
   planTier: "free",
   aiPromptsUsed: 0,
-  aiPromptsLimit: 3,
+  aiPromptsLimit: FREE_AI_PROMPTS,
   createdAt: nowIso(),
 });
 
@@ -294,7 +295,7 @@ export const useAppStore = create<Store>()(
           currentUser: {
             ...user,
             planTier: tier,
-            aiPromptsLimit: tier === "free" ? 3 : 999,
+            aiPromptsLimit: tier === "free" ? FREE_AI_PROMPTS : 999,
           },
         });
       },
@@ -344,6 +345,9 @@ export const useAppStore = create<Store>()(
         events: state.events,
       }),
       onRehydrateStorage: () => (state) => {
+        if (state?.currentUser?.planTier === "free") {
+          state.currentUser.aiPromptsLimit = FREE_AI_PROMPTS;
+        }
         state?.setHydrated();
       },
     },
