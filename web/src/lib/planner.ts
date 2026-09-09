@@ -155,7 +155,7 @@ function activities(type: string, themeName: string): Omit<Activity, "id" | "eve
     return [
       {
         title: "Canopy scavenger hunt",
-        ageRange: "2–6",
+        ageRange: "2-6",
         durationMinutes: 20,
         suppliesNeeded: ["Picture cards", "Tape", "Small stickers"],
         steps: [
@@ -167,7 +167,7 @@ function activities(type: string, themeName: string): Omit<Activity, "id" | "eve
       },
       {
         title: "Leaf-mask studio",
-        ageRange: "3–8",
+        ageRange: "3-8",
         durationMinutes: 25,
         suppliesNeeded: ["Card stock masks", "Crayons", "Elastic"],
         steps: [
@@ -199,7 +199,7 @@ function printables(title: string, themeName: string): Omit<Printable, "id" | "e
     {
       title: `${title} invitation`,
       type: "invitation",
-      body: `You're invited.\n${title}\nA ${themeName} gathering — come as you are.`,
+      body: `You're invited.\n${title}\nA ${themeName} gathering. Come as you are.`,
       createdAt: nowIso(),
     },
     {
@@ -296,7 +296,7 @@ export function instantiateEvent(input: WizardInput): EventRecord {
     })),
     plannerNotes: [
       "Confirm the venue dimensions before ordering balloons or florals.",
-      "Collect dietary notes with RSVPs — the food budget assumes 2 unknowns.",
+      "Collect dietary notes with RSVPs. The food budget assumes 2 unknowns.",
       "Assign a setup lead; the first 90 minutes is the riskiest part of the day.",
     ],
     qualityScore,

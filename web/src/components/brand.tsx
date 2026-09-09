@@ -15,7 +15,7 @@ export function BrandLockup({
       <span className={`relative block aspect-[774/495] w-full ${className}`}>
         <Image
           src={brand.logo}
-          alt={`${brand.name} — ${brand.tagline}`}
+          alt={`${brand.name}: ${brand.tagline}`}
           fill
           unoptimized
           className="object-contain"
@@ -29,7 +29,7 @@ export function BrandLockup({
   return (
     <Image
       src={brand.logo}
-      alt={`${brand.name} — ${brand.tagline}`}
+      alt={`${brand.name}: ${brand.tagline}`}
       width={973}
       height={427}
       className={`object-contain ${className}`}

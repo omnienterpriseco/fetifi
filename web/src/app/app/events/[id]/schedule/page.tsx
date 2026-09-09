@@ -44,7 +44,7 @@ export default function SchedulePage() {
                 >
                   <p className="text-xs text-muted">
                     {formatTime(item.startTime)}
-                    {item.endTime ? ` – ${formatTime(item.endTime)}` : ""}
+                    {item.endTime ? ` - ${formatTime(item.endTime)}` : ""}
                   </p>
                   <p className={`text-lg ${item.isCompleted ? "line-through opacity-50" : ""}`}>
                     {item.title}

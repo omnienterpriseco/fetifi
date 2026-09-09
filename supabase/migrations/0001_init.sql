@@ -1,4 +1,4 @@
--- Smart Event Planning Platform — structural core
+-- Smart Event Planning Platform: structural core
 -- Apply in the Supabase SQL editor (or via CLI) when you connect a project.
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";

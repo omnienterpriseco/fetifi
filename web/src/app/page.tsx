@@ -5,7 +5,7 @@ import { brand } from "@/lib/brand";
 const modules = [
   ["Wizard", "One prompt or a short walkthrough. A full workspace appears."],
   ["Themes", "Accent, type, and printables shift with the event."],
-  ["Supplies", "Decor, food, gear — needed, borrowed, or on the way."],
+  ["Supplies", "Decor, food, gear: needed, borrowed, or on the way."],
   ["Run of show", "Prep, doors, peak, tear-down. Minute by minute."],
   ["Budget", "Ceilings, actuals, and a warning before you overspend."],
   ["Team", "Roles, tasks, and who owns the cake."],
@@ -26,7 +26,7 @@ export default function HomePage() {
             {brand.tagline}
           </h1>
           <p className="mt-6 max-w-md text-lg text-muted">
-            Type something like “3rd birthday — jungle theme — $500.” Walk into a
+            Type something like “3rd birthday, jungle theme, $500.” Walk into a
             themed workspace with a timeline, budget, supplies, guests, and printables
             already in it.
           </p>
@@ -39,7 +39,7 @@ export default function HomePage() {
             </Button>
           </div>
           <p className="mt-6 text-xs text-muted">
-            {brand.name} on the web and on iPhone — one event, everywhere.
+            {brand.name} on the web and on iPhone: one event, everywhere.
           </p>
         </section>
 

@@ -64,7 +64,7 @@ export default function AiPage() {
           id: uid(),
           eventId: current.id,
           title: "Quiet corner reset",
-          ageRange: "2–5",
+          ageRange: "2-5",
           durationMinutes: 10,
           suppliesNeeded: ["Floor pillows", "Picture books"],
           steps: ["Park overstimulated kids with a grown-up.", "No photos, no pressure.", "Rejoin when they ask."],
@@ -75,7 +75,7 @@ export default function AiPage() {
     }
     if (jobType === "budget") {
       job.resultPayload = optimizeBudget(current);
-      setMessage("Budget optimizer ran — see the Budget tab.");
+      setMessage("Budget optimizer ran. See the Budget tab.");
     }
     if (jobType === "check") {
       job.resultPayload = readiness(current);
@@ -127,7 +127,7 @@ export default function AiPage() {
         </Button>
       </div>
       <label className="mt-8 block hairline rounded-3xl bg-white/50 p-6 text-sm">
-        Inspiration analyzer — drop a Pinterest screenshot or mood board
+        Inspiration analyzer: drop a Pinterest screenshot or mood board
         <input
           className="mt-3 block w-full text-sm"
           type="file"

@@ -15,7 +15,7 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: `${brand.name} — ${brand.tagline}`,
+  title: `${brand.name}: ${brand.tagline}`,
   description: brand.description,
   icons: {
     icon: brand.mark,
