@@ -5,22 +5,20 @@ struct WelcomeView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "#F3EEE6").ignoresSafeArea()
-            VStack(alignment: .leading, spacing: 20) {
-                Text(Brand.name.uppercased())
-                    .font(.caption)
-                    .tracking(2)
-                    .foregroundStyle(.secondary)
-                Text(Brand.tagline)
-                    .font(.largeTitle.weight(.medium))
+            Color.black.ignoresSafeArea()
+            VStack(alignment: .leading, spacing: 24) {
+                Image("BrandLogo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: 320)
                 Text("The same workspace as the website: wizard, timeline, budget, and guests.")
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.white.opacity(0.7))
                 Spacer()
                 Button("Open Fetifye") {
                     store.signIn()
                 }
                 .buttonStyle(.borderedProminent)
-                .tint(Color(hex: "#1C1916"))
+                .tint(Color(hex: "#6B4CFF"))
             }
             .padding(28)
         }

@@ -1,14 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --paper: #f3eee6;
-  --paper-2: #ebe3d6;
-  --ink: #1c1916;
-  --ink-soft: #5c564e;
-  --line: rgba(28, 25, 22, 0.12);
-  --accent: #2f4a3c;
-  --accent-2: #c45c26;
-  --gold: #c4a574;
+  --paper: #e7f4f3;
+  --paper-2: #d5eceb;
+  --ink: #12151c;
+  --ink-soft: #4d5a66;
+  --line: rgba(18, 21, 28, 0.12);
+  --accent: #6b4cff;
+  --accent-2: #e25aa8;
+  --gold: #7fd4cf;
+  --mint: #90ccca;
 }
 
 @theme inline {
@@ -46,8 +47,8 @@ h3,
 
 .grain {
   background-image:
-    radial-gradient(circle at 18% 12%, rgba(196, 165, 116, 0.18), transparent 28%),
-    radial-gradient(circle at 88% 0%, rgba(47, 74, 60, 0.1), transparent 32%),
+    radial-gradient(circle at 18% 12%, rgba(226, 90, 168, 0.12), transparent 28%),
+    radial-gradient(circle at 88% 0%, rgba(107, 76, 255, 0.12), transparent 32%),
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");
 }
 

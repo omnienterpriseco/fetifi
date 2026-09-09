@@ -17,6 +17,10 @@ const fraunces = Fraunces({
 export const metadata: Metadata = {
   title: `${brand.name} — ${brand.tagline}`,
   description: brand.description,
+  icons: {
+    icon: brand.icon,
+    apple: "/brand/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

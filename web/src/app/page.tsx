@@ -1,4 +1,5 @@
 import { MarketingNav } from "@/components/nav";
+import { BrandLockup } from "@/components/brand";
 import { Button } from "@/components/ui";
 import { brand } from "@/lib/brand";
 
@@ -21,7 +22,7 @@ export default function HomePage() {
         <section className="grid items-center gap-12 py-10 md:grid-cols-[1.1fr_0.9fr] md:py-16">
           <div>
             <p className="text-xs uppercase tracking-[0.22em] text-muted">
-              Web + iPhone · Cloud-first
+              {brand.name} · Web + iPhone
             </p>
             <h1 className="mt-4 max-w-xl text-5xl leading-[1.05] md:text-7xl">
               {brand.tagline}
@@ -43,30 +44,12 @@ export default function HomePage() {
               {brand.name} on the web and on iPhone — one event, everywhere.
             </p>
           </div>
-          <div className="relative">
-            <div className="box-shadow hairline rounded-[2rem] bg-paper-2 p-4">
-              <div className="rounded-[1.4rem] bg-[#1f4d3a] px-5 py-4 text-[#f3e2b4]">
-                <p className="text-[10px] uppercase tracking-[0.2em] opacity-80">
-                  Instant transformation
-                </p>
-                <p className="display mt-2 text-2xl">Leo’s jungle birthday</p>
-                <p className="mt-1 text-sm opacity-80">Sat 2:00 PM · $500 ceiling</p>
-              </div>
-              <ul className="mt-4 space-y-2 text-sm">
-                {[
-                  "Quality score 72 · 3 gaps to close",
-                  "Run-of-show: 7 blocks from setup to strike",
-                  "Join code ready for grandparents",
-                ].map((line) => (
-                  <li
-                    key={line}
-                    className="hairline rounded-2xl bg-white/50 px-4 py-3"
-                  >
-                    {line}
-                  </li>
-                ))}
-              </ul>
-            </div>
+          <div className="relative flex justify-center">
+            <img
+              src={brand.icon}
+              alt={`${brand.name} app icon`}
+              className="h-auto w-full max-w-sm rounded-[2.4rem] shadow-[0_24px_60px_rgba(107,76,255,0.25)]"
+            />
           </div>
         </section>
 
@@ -82,17 +65,22 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="mt-8 grid gap-6 rounded-[2rem] bg-ink px-8 py-12 text-paper md:grid-cols-2">
-          <div>
-            <h2 className="text-3xl text-paper">Same event. Phone and browser.</h2>
-            <p className="mt-3 text-sm text-paper/70">
-              Native iOS and this web app share one schema: owners, editors, viewers,
-              entitlements, and the workspace itself.
-            </p>
+        <section className="mt-8 rounded-[2rem] bg-black px-8 py-12 text-paper">
+          <div className="mx-auto max-w-2xl">
+            <BrandLockup />
           </div>
-          <div className="text-sm text-paper/80">
-            <p>Apple / email sign-in · granular access · full account deletion</p>
-            <p className="mt-2">Realtime collaboration is wired for Supabase when you connect it.</p>
+          <div className="mt-10 grid gap-6 md:grid-cols-2">
+            <div>
+              <h2 className="text-3xl text-paper">Same event. Phone and browser.</h2>
+              <p className="mt-3 text-sm text-paper/70">
+                Native iOS and this web app share one schema: owners, editors, viewers,
+                entitlements, and the workspace itself.
+              </p>
+            </div>
+            <div className="text-sm text-paper/80">
+              <p>Apple / email sign-in · granular access · full account deletion</p>
+              <p className="mt-2">Realtime collaboration is wired for Supabase when you connect it.</p>
+            </div>
           </div>
         </section>
       </main>
