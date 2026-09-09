@@ -338,7 +338,7 @@ export const useAppStore = create<Store>()(
       deleteAccount: () => set({ currentUser: null, events: [] }),
     }),
     {
-      name: "fetifye-store",
+      name: "fetifi-store",
       partialize: (state) => ({
         currentUser: state.currentUser,
         events: state.events,

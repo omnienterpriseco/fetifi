@@ -12,7 +12,7 @@ export function BrandLockup({
 }) {
   if (fillWidth) {
     return (
-      <span className={`relative block aspect-[985/439] w-full ${className}`}>
+      <span className={`relative block aspect-[774/495] w-full ${className}`}>
         <Image
           src={brand.logo}
           alt={`${brand.name} — ${brand.tagline}`}

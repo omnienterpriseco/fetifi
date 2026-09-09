@@ -1,4 +1,4 @@
-# Fetifye
+# Fetifi
 
 End-to-end event planning: a Next.js website and a native SwiftUI iPhone app.
 

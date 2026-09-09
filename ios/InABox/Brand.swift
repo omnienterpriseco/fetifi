@@ -1,6 +1,6 @@
 import Foundation
 
 enum Brand {
-    static let name = "Fetifye"
+    static let name = "Fetifi"
     static let tagline = "Party in a box"
 }

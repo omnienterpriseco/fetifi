@@ -14,7 +14,7 @@ struct WelcomeView: View {
                 Text("The same workspace as the website: wizard, timeline, budget, and guests.")
                     .foregroundStyle(Color(hex: "#2F4A52"))
                 Spacer()
-                Button("Open Fetifye") {
+                Button("Open Fetifi") {
                     store.signIn()
                 }
                 .buttonStyle(.borderedProminent)

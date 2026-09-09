@@ -7,7 +7,7 @@ final class BoxStore: ObservableObject {
     @Published var hostName = "Host"
     @Published var events: [EventRecord] = []
 
-    private let key = "fetifye-ios-events"
+    private let key = "fetifi-ios-events"
 
     init() {
         load()
@@ -46,11 +46,11 @@ final class BoxStore: ObservableObject {
         if let data = try? JSONEncoder().encode(events) {
             UserDefaults.standard.set(data, forKey: key)
         }
-        UserDefaults.standard.set(signedIn, forKey: "fetifye-signed-in")
+        UserDefaults.standard.set(signedIn, forKey: "fetifi-signed-in")
     }
 
     private func load() {
-        signedIn = UserDefaults.standard.bool(forKey: "fetifye-signed-in")
+        signedIn = UserDefaults.standard.bool(forKey: "fetifi-signed-in")
         guard let data = UserDefaults.standard.data(forKey: key),
               let decoded = try? JSONDecoder().decode([EventRecord].self, from: data) else { return }
         events = decoded
