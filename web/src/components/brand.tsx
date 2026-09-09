@@ -40,6 +40,16 @@ export function BrandLockup({
   );
 }
 
+export function PastelTagline({ className = "" }: { className?: string }) {
+  return (
+    <span className={className}>
+      <span className="text-[#e8a8c4]">Party</span>{" "}
+      <span className="text-[#9fc4b8]">in a</span>{" "}
+      <span className="text-[#c9b6de]">box</span>
+    </span>
+  );
+}
+
 export function BrandBar({ compact = false }: { compact?: boolean }) {
   return (
     <span className="inline-flex items-center">

@@ -1,28 +1,99 @@
 import SwiftUI
 
+private struct ConfettiBit: Identifiable {
+    let id = UUID()
+    let startX: CGFloat
+    let startY: CGFloat
+    let endX: CGFloat
+    let endY: CGFloat
+    let delay: Double
+    let duration: Double
+    let size: CGFloat
+    let color: Color
+}
+
+private struct WelcomeConfetti: View {
+    @State private var bits: [ConfettiBit] = []
+    @State private var pop = false
+
+    var body: some View {
+        GeometryReader { geo in
+            ForEach(bits) { bit in
+                Circle()
+                    .fill(bit.color)
+                    .frame(width: bit.size, height: bit.size)
+                    .position(
+                        x: pop ? bit.endX : bit.startX,
+                        y: pop ? bit.endY : bit.startY
+                    )
+                    .animation(.easeOut(duration: bit.duration).delay(bit.delay), value: pop)
+            }
+            .onAppear {
+                let colors = [
+                    Color(hex: "#E8A8C4"),
+                    Color(hex: "#9FC4B8"),
+                    Color(hex: "#C9B6DE"),
+                    Color(hex: "#E2C48A"),
+                    Color(hex: "#9DB8CC"),
+                ]
+                let cx = geo.size.width / 2
+                let cy = geo.size.height * 0.34
+                bits = (0..<70).map { index in
+                    let popping = index < 40
+                    let angle = Double.random(in: 0...(2 * .pi))
+                    let distance = CGFloat.random(in: 40...220)
+                    return ConfettiBit(
+                        startX: popping ? cx : CGFloat.random(in: 8...(geo.size.width - 8)),
+                        startY: popping ? cy : -16,
+                        endX: popping ? cx + CGFloat(cos(angle)) * distance : CGFloat.random(in: 8...(geo.size.width - 8)),
+                        endY: popping ? cy + CGFloat(sin(angle)) * distance : geo.size.height + 24,
+                        delay: Double.random(in: 0...0.35),
+                        duration: popping ? Double.random(in: 0.8...1.3) : Double.random(in: 2.0...3.1),
+                        size: CGFloat.random(in: 4...9),
+                        color: colors[index % colors.count]
+                    )
+                }
+                pop = true
+            }
+        }
+        .allowsHitTesting(false)
+    }
+}
+
 struct WelcomeView: View {
     @EnvironmentObject private var store: BoxStore
 
     var body: some View {
         ZStack {
-            Color(hex: "#95BDC7").ignoresSafeArea()
-            VStack(alignment: .leading, spacing: 24) {
+            Color.white.ignoresSafeArea()
+            WelcomeConfetti()
+            VStack(spacing: 24) {
                 Image("BrandLogo")
                     .resizable()
                     .scaledToFit()
-                    .frame(maxWidth: 320)
+                    .frame(maxWidth: 280)
+                (
+                    Text("Party ").foregroundStyle(Color(hex: "#E8A8C4"))
+                    + Text("in a ").foregroundStyle(Color(hex: "#9FC4B8"))
+                    + Text("box").foregroundStyle(Color(hex: "#C9B6DE"))
+                )
+                .font(.largeTitle.weight(.medium))
+                .multilineTextAlignment(.center)
                 Text("The same workspace as the website: wizard, timeline, budget, and guests.")
-                    .foregroundStyle(Color(hex: "#2F4A52"))
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(Color(hex: "#6A6170"))
                 Text("Sale, no end date. Event kit \(Brand.eventKitPrice) (was \(Brand.eventKitWas)). Pro \(Brand.proPrice) (was \(Brand.proWas)). Free includes \(Brand.freeAiPromptsPerMonth) AI prompts a month.")
                     .font(.footnote)
-                    .foregroundStyle(Color(hex: "#2F4A52"))
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(Color(hex: "#6A6170"))
                 Spacer()
                 Button("Open Fetifi") {
                     store.signIn()
                 }
                 .buttonStyle(.borderedProminent)
-                .tint(Color(hex: "#6B4CFF"))
+                .tint(Color(hex: "#C989A8"))
             }
+            .frame(maxWidth: .infinity)
             .padding(28)
         }
     }
@@ -33,7 +104,20 @@ struct HomeView: View {
     @State private var prompt = "3rd Birthday Party - Jungle Theme - $500 budget"
 
     var body: some View {
-        List {
+        ZStack {
+            Color.white.ignoresSafeArea()
+            WelcomeConfetti()
+            List {
+            Section {
+                (
+                    Text("Party ").foregroundStyle(Color(hex: "#E8A8C4"))
+                    + Text("in a ").foregroundStyle(Color(hex: "#9FC4B8"))
+                    + Text("box").foregroundStyle(Color(hex: "#C9B6DE"))
+                )
+                .font(.title.weight(.medium))
+                .frame(maxWidth: .infinity)
+                .multilineTextAlignment(.center)
+            }
             Section("New event") {
                 TextField("The whole idea", text: $prompt, axis: .vertical)
                 Button("Fill the box") {
@@ -56,6 +140,7 @@ struct HomeView: View {
                 }
             }
         }
+        .scrollContentBackground(.hidden)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
@@ -70,11 +155,12 @@ struct HomeView: View {
                 }
             }
         }
-        .toolbarBackground(Color(hex: "#95BDC7"), for: .navigationBar)
+        .toolbarBackground(Color.white, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .toolbarColorScheme(.light, for: .navigationBar)
         .navigationDestination(for: EventRecord.self) { event in
             EventHubView(eventId: event.id)
+        }
         }
     }
 }

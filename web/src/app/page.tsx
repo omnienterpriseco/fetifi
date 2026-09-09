@@ -1,4 +1,6 @@
 import { MarketingNav } from "@/components/nav";
+import { LandingConfetti } from "@/components/landing-confetti";
+import { PastelTagline } from "@/components/brand";
 import { Button } from "@/components/ui";
 import { brand } from "@/lib/brand";
 
@@ -16,21 +18,22 @@ const modules = [
 export default function HomePage() {
   return (
     <div className="min-h-screen">
+      <LandingConfetti />
       <MarketingNav />
       <main className="mx-auto max-w-6xl px-6 pb-24 md:px-10">
-        <section className="max-w-2xl py-10 lg:py-16">
+        <section className="mx-auto max-w-2xl py-10 text-center lg:py-16">
           <p className="text-xs uppercase tracking-[0.22em] text-muted">
             {brand.name} · Web + iPhone
           </p>
           <h1 className="mt-4 text-5xl leading-[1.05] md:text-7xl">
-            {brand.tagline}
+            <PastelTagline />
           </h1>
-          <p className="mt-6 max-w-md text-lg text-muted">
+          <p className="mx-auto mt-6 max-w-md text-lg text-muted">
             Type something like “3rd birthday, jungle theme, $500.” Walk into a
             themed workspace with a timeline, budget, supplies, guests, and printables
             already in it.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Button href="/signup" variant="dark">
               Open an empty box
             </Button>
@@ -47,7 +50,7 @@ export default function HomePage() {
           <h2 className="text-3xl md:text-4xl">Everything that lives in the box</h2>
           <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {modules.map(([title, copy]) => (
-              <article key={title} className="hairline rounded-3xl bg-white/40 p-5">
+              <article key={title} className="hairline rounded-3xl bg-paper-2/80 p-5">
                 <h3 className="text-xl">{title}</h3>
                 <p className="mt-2 text-sm text-muted">{copy}</p>
               </article>

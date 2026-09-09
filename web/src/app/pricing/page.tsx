@@ -50,7 +50,7 @@ export default function PricingPage() {
         </p>
         <div className="mt-10 grid gap-4 md:grid-cols-3">
           {tiers.map((tier) => (
-            <article key={tier.name} className="hairline flex flex-col rounded-[1.8rem] bg-white/40 p-6">
+            <article key={tier.name} className="hairline flex flex-col rounded-[1.8rem] bg-paper-2/80 p-6">
               {"was" in tier ? (
                 <p className="text-xs uppercase tracking-[0.16em] text-muted">Sale</p>
               ) : null}

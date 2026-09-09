@@ -29,7 +29,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${outfit.variable} ${fraunces.variable} h-full antialiased`}
     >
-      <body className="min-h-full grain text-ink">
+      <body className="min-h-full text-ink">
         <Providers>{children}</Providers>
       </body>
     </html>
