@@ -1,5 +1,4 @@
 import { MarketingNav } from "@/components/nav";
-import { BrandLockup } from "@/components/brand";
 import { Button } from "@/components/ui";
 import { brand } from "@/lib/brand";
 
@@ -19,34 +18,29 @@ export default function HomePage() {
     <div className="min-h-screen">
       <MarketingNav />
       <main className="mx-auto max-w-6xl px-6 pb-24 md:px-10">
-        <section className="flex flex-col gap-10 py-10 lg:grid lg:grid-cols-2 lg:items-center lg:gap-12 lg:py-16">
-          <div>
-            <p className="text-xs uppercase tracking-[0.22em] text-muted">
-              {brand.name} · Web + iPhone
-            </p>
-            <h1 className="mt-4 max-w-xl text-5xl leading-[1.05] md:text-7xl">
-              {brand.tagline}
-            </h1>
-            <p className="mt-6 max-w-md text-lg text-muted">
-              Type something like “3rd birthday — jungle theme — $500.” Walk into a
-              themed workspace with a timeline, budget, supplies, guests, and printables
-              already in it.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button href="/signup" variant="dark">
-                Open an empty box
-              </Button>
-              <Button href="/pricing" variant="outline">
-                See kits & Pro
-              </Button>
-            </div>
-            <p className="mt-6 text-xs text-muted">
-              {brand.name} on the web and on iPhone — one event, everywhere.
-            </p>
+        <section className="max-w-2xl py-10 lg:py-16">
+          <p className="text-xs uppercase tracking-[0.22em] text-muted">
+            {brand.name} · Web + iPhone
+          </p>
+          <h1 className="mt-4 text-5xl leading-[1.05] md:text-7xl">
+            {brand.tagline}
+          </h1>
+          <p className="mt-6 max-w-md text-lg text-muted">
+            Type something like “3rd birthday — jungle theme — $500.” Walk into a
+            themed workspace with a timeline, budget, supplies, guests, and printables
+            already in it.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Button href="/signup" variant="dark">
+              Open an empty box
+            </Button>
+            <Button href="/pricing" variant="outline">
+              See kits & Pro
+            </Button>
           </div>
-          <div className="relative w-full min-w-0">
-            <BrandLockup priority />
-          </div>
+          <p className="mt-6 text-xs text-muted">
+            {brand.name} on the web and on iPhone — one event, everywhere.
+          </p>
         </section>
 
         <section id="modules" className="py-10">
@@ -62,10 +56,7 @@ export default function HomePage() {
         </section>
 
         <section className="mt-8 rounded-[2rem] px-8 py-12">
-          <div className="mx-auto max-w-2xl">
-            <BrandLockup />
-          </div>
-          <div className="mt-10 grid gap-6 md:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2">
             <div>
               <h2 className="text-3xl">Same event. Phone and browser.</h2>
               <p className="mt-3 text-sm text-muted">
