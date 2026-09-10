@@ -3,7 +3,7 @@ export const brand = {
   tagline: "Party in a box",
   description:
     "Turn a rough idea into a fully planned, ready-to-run event, on the web and on iPhone.",
-  logo: "/brand/logo.png?v=6",
+  logo: "/brand/logo.png?v=7",
   mark: "/brand/logo-mark.png?v=6",
   appCover: "/brand/app-icon.png?v=6",
 };

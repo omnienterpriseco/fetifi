@@ -1,17 +1,27 @@
-//
-//  FetifiApp.swift
-//  Fetifi
-//
-//  Created by Alexandria Knights on 9/9/26.
-//
-
 import SwiftUI
 
 @main
 struct FetifiApp: App {
+    @State private var store = BoxStore()
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
+                .environment(store)
+        }
+    }
+}
+
+struct RootView: View {
+    @Environment(BoxStore.self) private var store
+
+    var body: some View {
+        if store.signedIn {
+            NavigationStack {
+                HomeView()
+            }
+        } else {
+            WelcomeView()
         }
     }
 }
