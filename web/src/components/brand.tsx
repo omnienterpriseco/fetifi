@@ -33,7 +33,7 @@ export function BrandLockup({
       width={994}
       height={544}
       className={`object-contain ${className}`}
-      sizes="240px"
+      sizes="320px"
       unoptimized
       priority={priority}
     />
@@ -55,7 +55,7 @@ export function BrandBar({ compact = false }: { compact?: boolean }) {
     <span className="inline-flex items-center">
       <BrandLockup
         fillWidth={false}
-        className={compact ? "h-8 w-auto max-w-[168px]" : "h-10 w-auto max-w-[220px]"}
+        className={compact ? "h-12 w-auto max-w-[240px]" : "h-16 w-auto max-w-[320px]"}
         priority
       />
     </span>

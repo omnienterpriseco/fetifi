@@ -147,7 +147,7 @@ struct HomeView: View {
                 Image("BrandLogo")
                     .resizable()
                     .scaledToFit()
-                    .frame(height: 28)
+                    .frame(height: 40)
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Delete account") {
