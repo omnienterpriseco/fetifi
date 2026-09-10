@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   description: brand.description,
   icons: {
     icon: brand.mark,
-    apple: brand.mark,
+    apple: brand.appCover,
   },
 };
 
