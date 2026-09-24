@@ -1,4 +1,5 @@
 import SwiftUI
+import PhotosUI
 
 private struct ConfettiBit: Identifiable {
     let id = UUID()
@@ -80,7 +81,7 @@ struct WelcomeView: View {
                     Image("BrandLogo")
                         .resizable()
                         .scaledToFit()
-                        .frame(maxWidth: 210)
+                        .frame(maxWidth: 148)
                         .padding(.top, 28)
 
                     Text(Brand.slogan)
@@ -140,183 +141,155 @@ struct WelcomeView: View {
 
 struct HomeView: View {
     @Environment(BoxStore.self) private var store
-    @State private var prompt = "3rd Birthday Party - Jungle Theme - $500 budget"
+    @State private var path = NavigationPath()
+    @State private var title = ""
+    @State private var vibe = "3rd birthday, jungle theme, backyard"
+    @State private var budget = "500"
+    @State private var location = ""
+    @State private var date = Calendar.current.date(byAdding: .day, value: 21, to: Date()) ?? Date()
+    @State private var guestCount = 12
+    @State private var pickerItems: [PhotosPickerItem] = []
+    @State private var photos: [Data] = []
+    @State private var created: EventRecord?
 
     var body: some View {
-        ZStack {
-            Color.white.ignoresSafeArea()
-            WelcomeConfetti()
-            List {
-            Section {
-                (
-                    Text("Party ").foregroundStyle(Color(hex: "#E8A8C4"))
-                    + Text("in a ").foregroundStyle(Color(hex: "#9FC4B8"))
-                    + Text("box").foregroundStyle(Color(hex: "#C9B6DE"))
-                )
-                .font(.title.weight(.medium))
-                .frame(maxWidth: .infinity)
-                .multilineTextAlignment(.center)
-            }
-            Section("New event") {
-                TextField("The whole idea", text: $prompt, axis: .vertical)
-                Button("Fill the box") {
-                    store.create(prompt: prompt)
-                }
-            }
-            Section("Workspaces") {
-                if store.events.isEmpty {
-                    Text("The box is empty.")
-                }
-                ForEach(store.events) { event in
-                    NavigationLink(value: event) {
-                        VStack(alignment: .leading) {
-                            Text(event.title).font(.headline)
-                            Text("\(event.themeName) · join \(event.joinCode)")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+        NavigationStack(path: $path) {
+            ZStack {
+                Color.white.ignoresSafeArea()
+                WelcomeConfetti()
+                List {
+                    Section {
+                        HStack(spacing: 0) {
+                            Text("Party ").foregroundStyle(Color(hex: "#E8A8C4"))
+                            Text("in a ").foregroundStyle(Color(hex: "#9FC4B8"))
+                            Text("box").foregroundStyle(Color(hex: "#C9B6DE"))
+                        }
+                        .font(.title.weight(.medium))
+                        .frame(maxWidth: .infinity)
+                        .multilineTextAlignment(.center)
+                        Text("Set a budget, drop inspo, and Fetifi fills a theme list, shopping ideas, timeline, and printables. You can change every line.")
+                            .font(.subheadline)
+                            .foregroundStyle(Color(hex: "#6A6170"))
+                            .multilineTextAlignment(.center)
+                    }
+                    Section("New party") {
+                        TextField("Party name", text: $title)
+                        TextField("The vibe", text: $vibe, axis: .vertical)
+                        HStack {
+                            Text("Budget $")
+                            TextField("500", text: $budget)
+                                .keyboardType(.decimalPad)
+                        }
+                        Stepper("Guests: \(guestCount)", value: $guestCount, in: 2...200)
+                        DatePicker("When", selection: $date)
+                        TextField("Where", text: $location)
+                        PhotosPicker(selection: $pickerItems, maxSelectionCount: 6, matching: .images) {
+                            Label(photos.isEmpty ? "Upload inspo photos" : "\(photos.count) inspo photos", systemImage: "photo.on.rectangle")
+                        }
+                        .onChange(of: pickerItems) { _, items in
+                            Task { await loadPhotos(items) }
+                        }
+                        Button("Ask Fetifi to plan it") {
+                            created = store.create(draft: PlanDraft(
+                                title: title,
+                                vibe: vibe,
+                                budget: Double(budget) ?? 500,
+                                location: location,
+                                date: date,
+                                guestCount: guestCount,
+                                photos: photos
+                            ))
+                            pickerItems = []
+                            photos = []
+                        }
+                    }
+                    Section("Workspaces") {
+                        if store.events.isEmpty {
+                            Text("The box is empty.")
+                        }
+                        ForEach(store.events) { event in
+                            NavigationLink(value: event.id) {
+                                VStack(alignment: .leading) {
+                                    Text(event.title).font(.headline)
+                                    Text("\(event.themeName) · $\(Int(event.totalBudget)) · join \(event.joinCode)")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
                         }
                     }
                 }
-            }
-        }
-        .scrollContentBackground(.hidden)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Image("BrandLogo")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 40)
-            }
-            ToolbarItem(placement: .topBarTrailing) {
-                Button("Delete account") {
-                    store.deleteAll()
-                }
-            }
-        }
-        .toolbarBackground(Color.white, for: .navigationBar)
-        .toolbarBackground(.visible, for: .navigationBar)
-        .toolbarColorScheme(.light, for: .navigationBar)
-        .navigationDestination(for: EventRecord.self) { event in
-            EventHubView(eventId: event.id)
-        }
-        }
-    }
-}
-
-struct EventHubView: View {
-    @Environment(BoxStore.self) private var store
-    let eventId: String
-
-    var event: EventRecord? {
-        store.events.first { $0.id == eventId }
-    }
-
-    var body: some View {
-        if let event {
-            TabView {
-                OverviewPane(event: event).tabItem { Label("Overview", systemImage: "square.stack") }
-                SchedulePane(event: event).tabItem { Label("Show", systemImage: "timeline.selection") }
-                SuppliesPane(event: event).tabItem { Label("Stuff", systemImage: "basket") }
-                GuestsPane(event: event).tabItem { Label("Guests", systemImage: "person.2") }
-            }
-            .navigationTitle(event.title)
-            .navigationBarTitleDisplayMode(.inline)
-        } else {
-            Text("Missing event")
-        }
-    }
-}
-
-struct OverviewPane: View {
-    let event: EventRecord
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(event.primary)
-                    .overlay(alignment: .bottomLeading) {
-                        VStack(alignment: .leading) {
-                            Text(event.themeName.uppercased()).font(.caption).foregroundStyle(.white.opacity(0.8))
-                            Text("Score \(event.qualityScore)").font(.title).foregroundStyle(.white)
+                .scrollContentBackground(.hidden)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Image("BrandLogo")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 26)
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Delete account") {
+                            store.deleteAll()
                         }
-                        .padding()
                     }
-                    .frame(height: 140)
-                Text(event.mood)
-                ForEach(event.plannerNotes, id: \.self) { note in
-                    Text("• \(note)").font(.subheadline)
                 }
-                Text("Budget ceiling $\(Int(event.totalBudget))")
-                    .font(.headline)
-            }
-            .padding()
-        }
-        .background(event.secondary)
-    }
-}
+                .toolbarBackground(Color.white, for: .navigationBar)
+                .toolbarBackground(.visible, for: .navigationBar)
+                .toolbarColorScheme(.light, for: .navigationBar)
+                .navigationDestination(for: String.self) { eventId in
+                    EventHubView(eventId: eventId)
+                }
 
-struct SchedulePane: View {
-    @Environment(BoxStore.self) private var store
-    let event: EventRecord
-
-    var body: some View {
-        List {
-            ForEach(event.schedules) { item in
-                Button {
-                    store.toggle(event.id, itemId: item.id)
-                } label: {
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(item.title)
-                            Text(item.notes).font(.caption).foregroundStyle(.secondary)
+                if let created {
+                    Color.black.opacity(0.32)
+                        .ignoresSafeArea()
+                        .onTapGesture { self.created = nil }
+                    VStack(alignment: .leading, spacing: 16) {
+                        HStack {
+                            Text("Workspace ready")
+                                .font(.title3.weight(.medium))
+                            Spacer()
+                            Button {
+                                self.created = nil
+                            } label: {
+                                Image(systemName: "xmark")
+                                    .font(.headline)
+                                    .foregroundStyle(Color(hex: "#6A6170"))
+                                    .padding(8)
+                            }
+                            .accessibilityLabel("Close")
                         }
-                        Spacer()
-                        Image(systemName: item.isCompleted ? "checkmark.circle.fill" : "circle")
+                        Text(created.title)
+                            .font(.headline)
+                        Text("Open it now, or close this and find it under Workspaces.")
+                            .font(.subheadline)
+                            .foregroundStyle(Color(hex: "#6A6170"))
+                        Button("Open workspace") {
+                            let id = created.id
+                            self.created = nil
+                            path.append(id)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(Color(hex: "#A888C4"))
+                        .foregroundStyle(.white)
                     }
+                    .padding(22)
+                    .background(Color.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+                    .padding(28)
                 }
             }
         }
     }
-}
 
-struct SuppliesPane: View {
-    let event: EventRecord
-    var body: some View {
-        List(event.supplies) { item in
-            HStack {
-                VStack(alignment: .leading) {
-                    Text(item.name)
-                    Text(item.category).font(.caption).foregroundStyle(.secondary)
-                }
-                Spacer()
-                Text("$\(Int(item.estimated))")
+    private func loadPhotos(_ items: [PhotosPickerItem]) async {
+        var loaded: [Data] = []
+        for item in items {
+            if let data = try? await item.loadTransferable(type: Data.self) {
+                loaded.append(data)
             }
         }
-    }
-}
-
-struct GuestsPane: View {
-    @Environment(BoxStore.self) private var store
-    let event: EventRecord
-
-    var body: some View {
-        List {
-            ForEach(event.guests) { guest in
-                HStack {
-                    Text(guest.name)
-                    Spacer()
-                    Picker("RSVP", selection: Binding(
-                        get: { guest.status },
-                        set: { store.setGuest(event.id, guestId: guest.id, status: $0) }
-                    )) {
-                        Text("pending").tag("pending")
-                        Text("accepted").tag("accepted")
-                        Text("declined").tag("declined")
-                    }
-                    .labelsHidden()
-                }
-            }
-        }
+        photos = loaded
     }
 }

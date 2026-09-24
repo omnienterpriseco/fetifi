@@ -13,6 +13,7 @@ import type {
   SupplyStatus,
 } from "./types";
 import { instantiateEvent, type WizardInput } from "./planner";
+import { inspoIdeas, printablePack, rankThemes } from "./party-ai";
 import { FREE_AI_PROMPTS } from "./pricing";
 import { nowIso, uid } from "./utils";
 
@@ -22,6 +23,7 @@ interface Store {
   events: EventRecord[];
   setHydrated: () => void;
   signIn: (email: string, fullName?: string) => void;
+  setTaste: (taste: { paletteVibe: string; partyFrequency: string; plannerLevel: string }) => void;
   signOut: () => void;
   createFromWizard: (
     input: Omit<WizardInput, "ownerId" | "ownerName" | "ownerEmail">,
@@ -44,6 +46,12 @@ interface Store {
   attachAiJob: (eventId: string, job: EventRecord["aiJobs"][number]) => void;
   applyActivities: (eventId: string, activities: EventRecord["activities"]) => void;
   applyPalette: (eventId: string, colors: string[], mood: string) => void;
+  addInspoPin: (eventId: string, pin: EventRecord["inspoPins"][number]) => void;
+  applyThemeOption: (eventId: string, theme: EventRecord["themeOptions"][number]) => void;
+  setBudgetCeiling: (eventId: string, amount: number) => void;
+  setBudgetLine: (eventId: string, lineId: string, patch: { allocatedAmount?: number; spentAmount?: number }) => void;
+  updatePrintable: (eventId: string, printableId: string, body: string) => void;
+  refreshPlan: (eventId: string) => void;
   deleteAccount: () => void;
 }
 
@@ -69,6 +77,11 @@ export const useAppStore = create<Store>()(
         set({
           currentUser: existing?.email === email ? existing : demoUser(email, fullName),
         });
+      },
+      setTaste: (taste) => {
+        const user = get().currentUser;
+        if (!user) return;
+        set({ currentUser: { ...user, ...taste } });
       },
       signOut: () => set({ currentUser: null }),
       createFromWizard: (input) => {
@@ -336,6 +349,98 @@ export const useAppStore = create<Store>()(
                 },
           ),
         }),
+      addInspoPin: (eventId, pin) =>
+        set({
+          events: get().events.map((event) =>
+            event.id !== eventId
+              ? event
+              : { ...event, inspoPins: [pin, ...(event.inspoPins || [])], updatedAt: nowIso() },
+          ),
+        }),
+      applyThemeOption: (eventId, theme) =>
+        set({
+          events: get().events.map((event) => {
+            if (event.id !== eventId) return event;
+            const guests = event.invitations.length || 12;
+            return {
+              ...event,
+              theme: {
+                ...event.theme,
+                themeName: theme.name,
+                primaryColor: theme.primaryColor,
+                secondaryColor: theme.secondaryColor,
+                accentColor: theme.accentColor,
+                mood: theme.mood,
+              },
+              printables: printablePack(event.title, theme, event.locationName, event.dateStart, guests, event.id),
+              inspoPins: [
+                ...(event.inspoPins || []).filter((pin) => pin.kind === "upload"),
+                ...inspoIdeas(theme, event.totalBudget, guests, event.id),
+              ],
+              updatedAt: nowIso(),
+            };
+          }),
+        }),
+      setBudgetCeiling: (eventId, amount) =>
+        get().updateEvent(eventId, { totalBudget: amount }),
+      setBudgetLine: (eventId, lineId, patch) =>
+        set({
+          events: get().events.map((event) =>
+            event.id !== eventId
+              ? event
+              : {
+                  ...event,
+                  budgets: event.budgets.map((row) => (row.id === lineId ? { ...row, ...patch } : row)),
+                  updatedAt: nowIso(),
+                },
+          ),
+        }),
+      updatePrintable: (eventId, printableId, body) =>
+        set({
+          events: get().events.map((event) =>
+            event.id !== eventId
+              ? event
+              : {
+                  ...event,
+                  printables: event.printables.map((row) => (row.id === printableId ? { ...row, body } : row)),
+                  updatedAt: nowIso(),
+                },
+          ),
+        }),
+      refreshPlan: (eventId) =>
+        set({
+          events: get().events.map((event) => {
+            if (event.id !== eventId) return event;
+            const hay = `${event.title} ${event.description} ${event.theme.themeName}`;
+            const options = rankThemes(hay);
+            const theme =
+              options.find((row) => row.name === event.theme.themeName) ||
+              options[0] || {
+                id: "current",
+                name: event.theme.themeName,
+                mood: event.theme.mood,
+                why: "Your current look.",
+                primaryColor: event.theme.primaryColor,
+                secondaryColor: event.theme.secondaryColor,
+                accentColor: event.theme.accentColor,
+              };
+            const guests = event.invitations.length || 12;
+            const uploads = (event.inspoPins || []).filter((pin) => pin.kind === "upload");
+            return {
+              ...event,
+              themeOptions: options,
+              plannerNotes: [
+                `Lock the guest count around ${guests} before you spend the food line.`,
+                `Keep 10% of ${event.totalBudget} as a buffer until the week of.`,
+                `The ${theme.name} look works if one surface repeats: napkins, sign, or backdrop.`,
+              ],
+              printables: printablePack(event.title, theme, event.locationName, event.dateStart, guests, event.id),
+              inspoPins: [...uploads, ...inspoIdeas(theme, event.totalBudget, guests, event.id)],
+              qualityScore: Math.min(96, 70 + Math.min(uploads.length, 4) * 4),
+              updatedAt: nowIso(),
+            };
+          }),
+        }),
       deleteAccount: () => set({ currentUser: null, events: [] }),
     }),
     {
@@ -347,6 +452,13 @@ export const useAppStore = create<Store>()(
       onRehydrateStorage: () => (state) => {
         if (state?.currentUser?.planTier === "free") {
           state.currentUser.aiPromptsLimit = FREE_AI_PROMPTS;
+        }
+        if (state?.events) {
+          state.events = state.events.map((event) => ({
+            ...event,
+            themeOptions: event.themeOptions || [],
+            inspoPins: event.inspoPins || [],
+          }));
         }
         state?.setHydrated();
       },

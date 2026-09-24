@@ -16,6 +16,7 @@ export default function AiPage() {
   const applyActivities = useAppStore((s) => s.applyActivities);
   const applyPalette = useAppStore((s) => s.applyPalette);
   const updateEvent = useAppStore((s) => s.updateEvent);
+  const refreshPlan = useAppStore((s) => s.refreshPlan);
   const [message, setMessage] = useState("");
 
   if (!event || !user) return null;
@@ -124,6 +125,15 @@ export default function AiPage() {
         </Button>
         <Button variant="outline" onClick={() => run("check")}>
           Readiness checker
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => {
+            refreshPlan(current.id);
+            setMessage("Themes, inspo ideas, and printables rebuilt.");
+          }}
+        >
+          Theme list and printables
         </Button>
       </div>
       <label className="mt-8 block hairline rounded-3xl bg-white/50 p-6 text-sm">

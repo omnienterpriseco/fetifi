@@ -21,6 +21,9 @@ export interface Profile {
   aiPromptsUsed: number;
   aiPromptsLimit: number;
   createdAt: string;
+  paletteVibe?: string;
+  partyFrequency?: string;
+  plannerLevel?: string;
 }
 
 export interface Theme {
@@ -153,6 +156,8 @@ export interface EventRecord {
   activities: Activity[];
   plannerNotes: string[];
   qualityScore: number;
+  themeOptions: ThemeOption[];
+  inspoPins: InspoPin[];
 }
 
 export interface Activity {
@@ -163,6 +168,26 @@ export interface Activity {
   durationMinutes: number;
   suppliesNeeded: string[];
   steps: string[];
+}
+
+export interface ThemeOption {
+  id: string;
+  name: string;
+  mood: string;
+  why: string;
+  primaryColor: string;
+  secondaryColor: string;
+  accentColor: string;
+}
+
+export interface InspoPin {
+  id: string;
+  eventId: string;
+  caption: string;
+  detail: string;
+  dataUrl?: string;
+  colors: string[];
+  kind: "upload" | "idea";
 }
 
 export interface AppState {

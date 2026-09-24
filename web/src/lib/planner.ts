@@ -3,12 +3,12 @@ import type {
   BudgetItem,
   EventRecord,
   Invitation,
-  Printable,
   ScheduleItem,
   Supply,
   Volunteer,
 } from "./types";
 import { pickTheme } from "./theme-presets";
+import { inspoIdeas, printablePack, rankThemes } from "./party-ai";
 import { addMinutes, makeJoinCode, nowIso, uid } from "./utils";
 
 export interface WizardInput {
@@ -19,6 +19,7 @@ export interface WizardInput {
   budget?: number;
   dateStart?: string;
   location?: string;
+  guestCount?: number;
   ownerId: string;
   ownerName: string;
   ownerEmail: string;
@@ -194,35 +195,6 @@ function activities(type: string, themeName: string): Omit<Activity, "id" | "eve
   ];
 }
 
-function printables(title: string, themeName: string): Omit<Printable, "id" | "eventId">[] {
-  return [
-    {
-      title: `${title} invitation`,
-      type: "invitation",
-      body: `You're invited.\n${title}\nA ${themeName} gathering. Come as you are.`,
-      createdAt: nowIso(),
-    },
-    {
-      title: "Welcome banner",
-      type: "banner",
-      body: title.toUpperCase(),
-      createdAt: nowIso(),
-    },
-    {
-      title: "Place cards",
-      type: "place_card",
-      body: "Guest name · table 1",
-      createdAt: nowIso(),
-    },
-    {
-      title: "Activity sheet",
-      type: "game_sheet",
-      body: "Find: parrot, lion, banana leaf, drum, cake.",
-      createdAt: nowIso(),
-    },
-  ];
-}
-
 export function instantiateEvent(input: WizardInput): EventRecord {
   const prompt = [input.prompt, input.title, input.eventType, input.demographic]
     .filter(Boolean)
@@ -232,8 +204,19 @@ export function instantiateEvent(input: WizardInput): EventRecord {
   const budget = input.budget ?? detectBudget(prompt || "", 500);
   const dateStart = startOfEvent(input);
   const themePick = pickTheme(prompt || title);
+  const themeOptions = rankThemes(prompt || title);
+  const theme = themeOptions[0] ?? {
+    id: "picked",
+    name: themePick.name,
+    mood: themePick.mood,
+    why: "Matched from your prompt.",
+    primaryColor: themePick.primaryColor,
+    secondaryColor: themePick.secondaryColor,
+    accentColor: themePick.accentColor,
+  };
+  const guests = input.guestCount || 12;
   const id = uid();
-  const catalog = catalogFor(eventType, themePick.name, budget);
+  const catalog = catalogFor(eventType, theme.name, budget);
   const qualityScore = 72;
 
   const event: EventRecord = {
@@ -242,7 +225,7 @@ export function instantiateEvent(input: WizardInput): EventRecord {
     title,
     description:
       input.prompt?.trim() ||
-      `A ${themePick.name.toLowerCase()} ${eventType.replace("_", " ")} planned for ${input.demographic || "your guests"}.`,
+      `A ${theme.name.toLowerCase()} ${eventType.replace("_", " ")} planned for ${input.demographic || "your guests"}.`,
     eventType,
     dateStart,
     dateEnd: addMinutes(dateStart, 180),
@@ -255,12 +238,12 @@ export function instantiateEvent(input: WizardInput): EventRecord {
     theme: {
       id: uid(),
       eventId: id,
-      themeName: themePick.name,
-      primaryColor: themePick.primaryColor,
-      secondaryColor: themePick.secondaryColor,
-      accentColor: themePick.accentColor,
+      themeName: theme.name,
+      primaryColor: theme.primaryColor,
+      secondaryColor: theme.secondaryColor,
+      accentColor: theme.accentColor,
       fontFamily: "Fraunces",
-      mood: themePick.mood,
+      mood: theme.mood,
     },
     schedules: timeline(dateStart, eventType).map((item) => ({
       ...item,
@@ -270,11 +253,7 @@ export function instantiateEvent(input: WizardInput): EventRecord {
     supplies: catalog.supplies.map((item) => ({ ...item, id: uid(), eventId: id })),
     budgets: catalog.budgets.map((item) => ({ ...item, id: uid(), eventId: id })),
     volunteers: volunteers(eventType).map((item) => ({ ...item, id: uid(), eventId: id })),
-    printables: printables(title, themePick.name).map((item) => ({
-      ...item,
-      id: uid(),
-      eventId: id,
-    })),
+    printables: printablePack(title, theme, input.location?.trim() || "To be confirmed", dateStart, guests, id),
     collaborators: [
       {
         id: uid(),
@@ -289,17 +268,20 @@ export function instantiateEvent(input: WizardInput): EventRecord {
     invitations: sampleGuests(id),
     comments: [],
     aiJobs: [],
-    activities: activities(eventType, themePick.name).map((item) => ({
+    activities: activities(eventType, theme.name).map((item) => ({
       ...item,
       id: uid(),
       eventId: id,
     })),
     plannerNotes: [
-      "Confirm the venue dimensions before ordering balloons or florals.",
-      "Collect dietary notes with RSVPs. The food budget assumes 2 unknowns.",
-      "Assign a setup lead; the first 90 minutes is the riskiest part of the day.",
+      `Lock the guest count around ${guests} before you spend the food line.`,
+      `Keep 10% of ${budget} as a buffer until the week of.`,
+      `The ${theme.name} look works if one surface repeats: napkins, sign, or backdrop.`,
+      "Assign a setup lead. The first 90 minutes is the riskiest part of the day.",
     ],
     qualityScore,
+    themeOptions,
+    inspoPins: inspoIdeas(theme, budget, guests, id),
   };
 
   return event;

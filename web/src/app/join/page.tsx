@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MarketingNav } from "@/components/nav";
+import { MarketingFooter } from "@/components/footer";
 import { Button, Field, inputClass } from "@/components/ui";
 import { useAppStore } from "@/lib/store";
 
@@ -46,6 +47,7 @@ export default function JoinPage() {
           </Button>
         </form>
       </main>
+      <MarketingFooter />
     </div>
   );
 }

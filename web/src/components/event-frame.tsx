@@ -5,12 +5,12 @@ import { useParams, usePathname } from "next/navigation";
 import { useAppStore } from "@/lib/store";
 
 const links = [
-  ["", "Overview"],
-  ["/schedule", "Schedule"],
-  ["/supplies", "Supplies"],
+  ["", "Plan"],
+  ["/inspo", "Inspo"],
+  ["/guests", "Guest list"],
+  ["/schedule", "Checklist"],
   ["/budget", "Budget"],
-  ["/guests", "Guests"],
-  ["/team", "Team"],
+  ["/supplies", "Stuff"],
   ["/printables", "Print"],
   ["/ai", "AI"],
 ];

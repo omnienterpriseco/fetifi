@@ -71,7 +71,7 @@ struct WelcomeView: View {
                 Image("BrandLogo")
                     .resizable()
                     .scaledToFit()
-                    .frame(maxWidth: 280)
+                    .frame(maxWidth: 148)
                 (
                     Text("Party ").foregroundStyle(Color(hex: "#E8A8C4"))
                     + Text("in a ").foregroundStyle(Color(hex: "#9FC4B8"))
@@ -147,7 +147,7 @@ struct HomeView: View {
                 Image("BrandLogo")
                     .resizable()
                     .scaledToFit()
-                    .frame(height: 40)
+                    .frame(height: 26)
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Delete account") {

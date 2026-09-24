@@ -14,7 +14,7 @@ export function MarketingNav() {
         <BrandBar />
       </Link>
       <nav className="hidden items-center gap-8 text-sm text-muted md:flex">
-        <Link href="/#modules">Modules</Link>
+        <Link href="/#how">How it works</Link>
         <Link href="/pricing">Pricing</Link>
         <Link href="/join">Join an event</Link>
       </nav>
@@ -29,7 +29,7 @@ export function MarketingNav() {
               Sign in
             </Button>
             <Button href="/signup" variant="dark">
-              Start free
+              Start trial
             </Button>
           </>
         )}

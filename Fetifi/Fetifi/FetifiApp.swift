@@ -17,8 +17,10 @@ struct RootView: View {
 
     var body: some View {
         if store.signedIn {
-            NavigationStack {
+            if store.onboardingComplete {
                 HomeView()
+            } else {
+                GetToKnowView()
             }
         } else {
             WelcomeView()

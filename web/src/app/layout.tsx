@@ -17,6 +17,11 @@ const fraunces = Fraunces({
 export const metadata: Metadata = {
   title: `${brand.name}: ${brand.tagline}`,
   description: brand.description,
+  openGraph: {
+    title: `${brand.name}: ${brand.tagline}`,
+    description: brand.description,
+    images: [brand.appCover],
+  },
   icons: {
     icon: brand.mark,
     apple: brand.appCover,
