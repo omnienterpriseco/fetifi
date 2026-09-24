@@ -203,30 +203,33 @@ enum EventFactory {
     }
 
     static func refreshAI(on event: EventRecord) -> EventRecord {
-        let options = PartyAI.rankedThemes(for: "\(event.title) \(event.description) \(event.themeName)")
-        let theme = options.first(where: { $0.name == event.themeName })
-            ?? ThemeOption(
-                id: "current",
-                name: event.themeName,
-                mood: event.mood,
-                why: "Your current look.",
-                primaryHex: event.primaryHex,
-                secondaryHex: event.secondaryHex,
-                accentHex: event.accentHex
+        let captions = event.inspoItems.map { "\($0.caption) \($0.detail)" }.joined(separator: " ")
+        let hay = "\(event.title) \(event.description) \(event.themeName) \(captions)"
+        var options = PartyAI.rankedThemes(for: hay)
+        if event.inspoItems.contains(where: { $0.kind == "upload" }), let top = options.first {
+            let named = ThemeOption(
+                id: "from-inspo",
+                name: "Inspo: \(top.name)",
+                mood: "A \(top.name.lowercased()) party pulled from your mood board.",
+                why: "Generated from the photos and notes you added.",
+                primaryHex: top.primaryHex,
+                secondaryHex: top.secondaryHex,
+                accentHex: top.accentHex
             )
-        var next = event
-        next.themeOptions = options
-        next.plannerNotes = PartyAI.notes(theme: theme, budget: event.totalBudget, guests: event.guestCount)
-        next.printables = PartyAI.printables(
-            title: event.title,
-            theme: theme,
-            location: event.locationName,
-            date: event.dateStart,
-            guests: event.guestCount
+            options = [named] + options.filter { $0.id != top.id }
+        }
+        let theme = options.first ?? ThemeOption(
+            id: "current",
+            name: event.themeName,
+            mood: event.mood,
+            why: "Your current look.",
+            primaryHex: event.primaryHex,
+            secondaryHex: event.secondaryHex,
+            accentHex: event.accentHex
         )
-        let uploads = event.inspoItems.filter { $0.kind == "upload" }
-        next.inspoItems = uploads + PartyAI.inspoIdeas(theme: theme, budget: event.totalBudget, guests: event.guestCount)
-        next.qualityScore = min(96, 70 + min(event.inspoItems.filter { $0.kind == "upload" }.count, 4) * 4)
+        var next = EventFactory.apply(theme: theme, to: event)
+        next.themeOptions = options
+        next.qualityScore = min(96, 70 + min(event.inspoItems.filter { $0.kind == "upload" }.count, 4) * 6)
         return next
     }
 

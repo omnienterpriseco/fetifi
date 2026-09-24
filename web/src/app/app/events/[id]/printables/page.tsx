@@ -37,6 +37,7 @@ export default function PrintablesPage() {
             <p className="text-[10px] uppercase tracking-[0.25em]">{item.type}</p>
             <h3 className="mt-3 text-center text-3xl">{item.title}</h3>
             <textarea
+              key={`${item.id}-${item.body.slice(0, 24)}`}
               className={`${inputClass} mt-4 min-h-40 bg-white/70 font-sans`}
               defaultValue={item.body}
               onBlur={(e) => updatePrintable(event.id, item.id, e.target.value)}

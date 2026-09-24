@@ -15,6 +15,7 @@ export default function InspoPage() {
   const refreshPlan = useAppStore((s) => s.refreshPlan);
   const [caption, setCaption] = useState("");
   const [message, setMessage] = useState("");
+  const [busy, setBusy] = useState(false);
 
   if (!event) return null;
   const pins = event.inspoPins || [];
@@ -22,43 +23,62 @@ export default function InspoPage() {
 
   async function onFiles(list: FileList | null) {
     if (!list || !event) return;
-    for (const file of Array.from(list)) {
-      const dataUrl = await fileToDataUrl(file);
-      const colors = await extractPalette(file);
-      addInspoPin(event.id, {
-        id: uid(),
-        eventId: event.id,
-        caption: caption || file.name.replace(/\.[^.]+$/, ""),
-        detail: "Uploaded inspo. Use it as a color and texture cue.",
-        dataUrl,
-        colors,
-        kind: "upload",
-      });
+    setBusy(true);
+    try {
+      for (const file of Array.from(list)) {
+        const [dataUrl, colors] = await Promise.all([fileToDataUrl(file), extractPalette(file)]);
+        addInspoPin(event.id, {
+          id: uid(),
+          eventId: event.id,
+          caption: caption || file.name.replace(/\.[^.]+$/, "") || "Mood board",
+          detail: "Pulled into your party idea: colors, printables, and a theme list.",
+          dataUrl: dataUrl || undefined,
+          colors,
+          kind: "upload",
+        });
+      }
+      refreshPlan(event.id);
+      setCaption("");
+      setMessage("Fetifi built a party idea from your photos. Check Plan, Print, and the theme list below.");
+    } catch {
+      setMessage("That photo could not be read. Try a JPG or PNG under 10 MB.");
+    } finally {
+      setBusy(false);
     }
-    setCaption("");
-    setMessage("Saved to the board.");
   }
 
   return (
     <div>
       <h2 className="text-3xl">Inspo and themes</h2>
       <p className="mt-2 text-sm text-muted">
-        Upload screenshots, then ask Fetifi for a theme list, shopping ideas, and printables.
+        Upload a mood board. Fetifi reads the colors, picks a party idea, and fills printables to match.
       </p>
       {message ? <p className="mt-3 text-sm">{message}</p> : null}
       <div className="mt-6 space-y-3 hairline rounded-3xl bg-white/50 p-5">
         <Field label="What do you like about it?">
-          <input className={inputClass} value={caption} onChange={(e) => setCaption(e.target.value)} />
+          <input className={inputClass} value={caption} onChange={(e) => setCaption(e.target.value)} placeholder="jungle greens, gold balloons..." />
         </Field>
-        <input className="text-sm" type="file" accept="image/*" multiple onChange={(e) => void onFiles(e.target.files)} />
+        <input
+          className="text-sm"
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/*"
+          multiple
+          disabled={busy}
+          onChange={(e) => {
+            const files = e.target.files;
+            void onFiles(files);
+            e.target.value = "";
+          }}
+        />
         <Button
           variant="dark"
+          disabled={busy}
           onClick={() => {
             refreshPlan(event.id);
-            setMessage("Theme list, inspo ideas, and printables refreshed.");
+            setMessage("Party idea, theme list, and printables rebuilt from your board.");
           }}
         >
-          Turn inspo into a plan
+          {busy ? "Reading photos..." : "Generate party from inspo"}
         </Button>
       </div>
       <h3 className="mt-10 text-2xl">Theme list</h3>

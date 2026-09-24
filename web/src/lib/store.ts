@@ -13,7 +13,13 @@ import type {
   SupplyStatus,
 } from "./types";
 import { instantiateEvent, type WizardInput } from "./planner";
-import { inspoIdeas, printablePack, rankThemes } from "./party-ai";
+import {
+  activitiesForTheme,
+  inspoIdeas,
+  plannerNotesFor,
+  printablePack,
+  themeOptionsFromInspo,
+} from "./party-ai";
 import { FREE_AI_PROMPTS } from "./pricing";
 import { nowIso, uid } from "./utils";
 
@@ -373,6 +379,7 @@ export const useAppStore = create<Store>()(
                 mood: theme.mood,
               },
               printables: printablePack(event.title, theme, event.locationName, event.dateStart, guests, event.id),
+              activities: activitiesForTheme(theme, event.id),
               inspoPins: [
                 ...(event.inspoPins || []).filter((pin) => pin.kind === "upload"),
                 ...inspoIdeas(theme, event.totalBudget, guests, event.id),
@@ -411,10 +418,8 @@ export const useAppStore = create<Store>()(
         set({
           events: get().events.map((event) => {
             if (event.id !== eventId) return event;
-            const hay = `${event.title} ${event.description} ${event.theme.themeName}`;
-            const options = rankThemes(hay);
+            const options = themeOptionsFromInspo(event);
             const theme =
-              options.find((row) => row.name === event.theme.themeName) ||
               options[0] || {
                 id: "current",
                 name: event.theme.themeName,
@@ -428,15 +433,20 @@ export const useAppStore = create<Store>()(
             const uploads = (event.inspoPins || []).filter((pin) => pin.kind === "upload");
             return {
               ...event,
+              theme: {
+                ...event.theme,
+                themeName: theme.name,
+                primaryColor: theme.primaryColor,
+                secondaryColor: theme.secondaryColor,
+                accentColor: theme.accentColor,
+                mood: theme.mood,
+              },
               themeOptions: options,
-              plannerNotes: [
-                `Lock the guest count around ${guests} before you spend the food line.`,
-                `Keep 10% of ${event.totalBudget} as a buffer until the week of.`,
-                `The ${theme.name} look works if one surface repeats: napkins, sign, or backdrop.`,
-              ],
+              plannerNotes: plannerNotesFor(theme, event.totalBudget, guests),
               printables: printablePack(event.title, theme, event.locationName, event.dateStart, guests, event.id),
+              activities: activitiesForTheme(theme, event.id),
               inspoPins: [...uploads, ...inspoIdeas(theme, event.totalBudget, guests, event.id)],
-              qualityScore: Math.min(96, 70 + Math.min(uploads.length, 4) * 4),
+              qualityScore: Math.min(96, 70 + Math.min(uploads.length, 4) * 6),
               updatedAt: nowIso(),
             };
           }),
@@ -447,7 +457,13 @@ export const useAppStore = create<Store>()(
       name: "fetifi-store",
       partialize: (state) => ({
         currentUser: state.currentUser,
-        events: state.events,
+        events: state.events.map((event) => ({
+          ...event,
+          inspoPins: (event.inspoPins || []).map((pin) => ({
+            ...pin,
+            dataUrl: undefined,
+          })),
+        })),
       }),
       onRehydrateStorage: () => (state) => {
         if (state?.currentUser?.planTier === "free") {

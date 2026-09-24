@@ -68,13 +68,14 @@ final class BoxStore {
                 InspoItem(
                     id: UUID().uuidString,
                     caption: caption.isEmpty ? "Uploaded inspo" : caption,
-                    detail: "Use this as a color and texture cue.",
+                    detail: "Pulled into your party idea.",
                     imageFile: file,
                     kind: "upload"
                 ),
                 at: 0
             )
         }
+        runAI(eventId)
     }
 
     func toggle(_ eventId: String, itemId: String) {
